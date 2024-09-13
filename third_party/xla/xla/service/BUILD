@@ -6414,6 +6414,7 @@ cc_library(
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
         "@local_tsl//tsl/platform:errors",
+        "@local_tsl//tsl/platform:macros",
         "@local_tsl//tsl/platform:statusor",
     ],
 )
