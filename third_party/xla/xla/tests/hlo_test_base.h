@@ -16,30 +16,36 @@ limitations under the License.
 #ifndef XLA_TESTS_HLO_TEST_BASE_H_
 #define XLA_TESTS_HLO_TEST_BASE_H_
 
+#include <cstdint>
 #include <functional>
+#include <initializer_list>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/base/attributes.h"
+#include "absl/log/log.h"
+#include "absl/status/status.h"
 #include "absl/status/statusor.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/span.h"
+#include "xla/error_spec.h"
 #include "xla/hlo/ir/hlo_instruction.h"
 #include "xla/hlo/ir/hlo_module.h"
 #include "xla/hlo/ir/hlo_module_group.h"
 #include "xla/hlo/ir/hlo_opcode.h"
+#include "xla/hlo/pass/hlo_pass_interface.h"
+#include "xla/literal.h"
 #include "xla/service/backend.h"
 #include "xla/service/computation_layout.h"
+#include "xla/service/hlo_module_config.h"
 #include "xla/service/hlo_runner.h"
 #include "xla/service/hlo_verifier.h"
-#include "xla/service/platform_util.h"
 #include "xla/shape_layout.h"
 #include "xla/stream_executor/device_memory_allocator.h"
-#include "xla/stream_executor/stream_executor.h"
-#include "xla/tests/literal_test_util.h"
 #include "xla/tests/verified_hlo_module.h"
-#include "xla/types.h"
 #include "xla/xla_data.pb.h"
 #include "tsl/platform/test.h"
 
@@ -186,6 +192,17 @@ class HloTestBase : public ::testing::Test {
       absl::Span<const absl::string_view> hlo_module_strs,
       HloPassInterface&& hlo_pass,
       std::optional<absl::Span<const absl::string_view>> expected);
+
+  using FixedMapping =
+      std::initializer_list<std::pair<absl::string_view, absl::string_view>>;
+
+  // Creates an HLO module from a template and an optional replacement map and
+  // runs the given hlo_pass on the module. Validates whether the pass has
+  // changed the module or not based on expect_change flag.  Returns unique_ptr
+  // to the HLO module for further inspection.
+  absl::StatusOr<std::unique_ptr<HloModule>> RunAndCheckHloRewrite(
+      absl::string_view hlo_template, HloPassInterface&& hlo_pass,
+      bool expect_change = true, FixedMapping params = {});
 
   // Populates debug options from command-line flags and adjusts the options for
   // testing. It is recommended to use this when you need to pass in
