@@ -96,3 +96,11 @@ func.func @constant() -> tensor<i32> {
   %0 = sdy.constant dense<0> : tensor<i32>
   return %0 : tensor<i32>
 }
+
+
+// CHECK-LABEL: func @op_sharding_rule
+func.func @op_sharding_rule(%arg0: tensor<8x2xf32>, %arg1: tensor<8x2xf32>) -> tensor<8x2xf64> {
+  // CHECK: stablehlo.custom_call @foo(%arg0, %arg1) {mhlo.frontend_attributes = {xla.sdy.sharding_rule = "#sdy.op_sharding_rule<([i, j], [i, j])->([i, j]) {i=8, j=2}>"}}
+  %0 = stablehlo.custom_call @foo(%arg0, %arg1) {sdy.sharding_rule = #sdy.op_sharding_rule<([i, j], [i, j])->([i, j]) {i=8, j=2}>} : (tensor<8x2xf32>, tensor<8x2xf32>) -> tensor<8x2xf64>
+  return %0 : tensor<8x2xf64>
+}

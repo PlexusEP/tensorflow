@@ -70,7 +70,9 @@ using ::mlir::func::FuncOp;
 using ::mlir::mhlo::CustomCallOp;
 
 using ::mlir::sdy::kShardingAttr;
+using ::mlir::sdy::kShardingRuleAttr;
 using ::mlir::sdy::MeshOp;
+using ::mlir::sdy::OpShardingRuleAttr;
 using ::mlir::sdy::TensorShardingAttr;
 using ::mlir::sdy::TensorShardingPerValueAttr;
 
@@ -80,6 +82,13 @@ void saveOpShardingPerValueAttr(Operation* op,
                                 TensorShardingPerValueAttr shardingPerValueAttr,
                                 OpBuilder& builder) {
   addFrontendAttribute(op, kShardingRoundTripAttr, shardingPerValueAttr);
+}
+
+// Saves `shardingRuleAttr` including any existing `frontendAttributes` on
+// the `op`.
+void saveOpShardingRuleAttr(Operation* op, OpShardingRuleAttr shardingRuleAttr,
+                            OpBuilder& builder) {
+  addFrontendAttribute(op, kShardingRuleRoundTripAttr, shardingRuleAttr);
 }
 
 // Converts the shardings from `kShardingAttr` into
@@ -125,6 +134,11 @@ LogicalResult exportFunc(FuncOp funcOp, OpBuilder& builder) {
     if (auto oldShardingPerValue =
             op->getAttrOfType<TensorShardingPerValueAttr>(kShardingAttr)) {
       saveOpShardingPerValueAttr(op, oldShardingPerValue, builder);
+    }
+    if (auto oldShardingRule =
+            op->getAttrOfType<OpShardingRuleAttr>(kShardingRuleAttr)) {
+      saveOpShardingRuleAttr(op, oldShardingRule, builder);
+      op->removeAttr(kShardingRuleAttr);
     }
   });
 

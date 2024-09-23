@@ -23,8 +23,8 @@ limitations under the License.
 namespace xla {
 namespace sdy {
 
-// Creates the pass that converts the shardings from strings in MHLO frontend
-// attributes to SDY meshes and shardings.
+// Creates the pass that converts the shardings and sharding rules from strings
+// in MHLO frontend attributes to SDY meshes, shardings and sharding rules.
 std::unique_ptr<mlir::Pass> createSdyRoundTripImportShardingsPass();
 
 // Registers the xla-sdy-round-trip-import-shardings pass.

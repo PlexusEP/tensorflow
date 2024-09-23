@@ -27,8 +27,10 @@ namespace sdy {
 void registerSdyRoundTripExportShardingsPass();
 
 // Creates the pass that converts the shardings from `kShardingAttr` to
-// `kShardingRoundTripAttr` in the HLO frontend attributes and saves the
-// mesh symbols as `kMeshesRoundTripAttr` in the module frontend attributes.
+// `kShardingRoundTripAttr` in the HLO frontend attributes, converts the
+// the sharding rules from `kShardingRuleAttr` to `kShardingRuleRoundTripAttr`
+// and saves the mesh symbols as `kMeshesRoundTripAttr` in the module frontend
+// attributes.
 //
 // NOTE: The `kShardingAttr`s are not removed from the ops. They are kept around
 // because part of the `SdyRoundTripExportPipeline` it also converts the
