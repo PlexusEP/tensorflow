@@ -97,6 +97,7 @@ cc_library(
         ":host_buffer",
         "//xla/python/ifrt",
         "//xla/python/ifrt_proxy/common:ifrt_service_proto_cc",
+        "//xla/tsl/profiler/utils:xplane_schema",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/log",
         "@com_google_absl//absl/log:check",
@@ -108,7 +109,6 @@ cc_library(
         "@local_tsl//tsl/platform:status_to_from_proto",
         "@local_tsl//tsl/profiler/lib:traceme",
         "@local_tsl//tsl/profiler/lib:traceme_encode",
-        "@local_tsl//tsl/profiler/utils:xplane_schema",
     ] + if_google(["@com_google_absl//absl/types:source_location"]),
 )
 
