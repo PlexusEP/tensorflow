@@ -1,4 +1,5 @@
 load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@local_tsl//tsl/platform/default:cuda_build_defs.bzl", "if_cuda_is_configured")
 load("@local_xla//xla/tsl:tsl.bzl", "if_cuda_libs")
 load(
     "//tensorflow:tensorflow.bzl",
@@ -170,9 +171,7 @@ tf_cuda_library(
     copts = tf_copts(),
     cuda_deps = [
         "@local_config_cuda//cuda:cudnn_header",
-        "@local_xla//xla/stream_executor/cuda:cuda_platform",
         "@local_xla//xla/stream_executor/gpu:gpu_stream",
-        "@local_xla//xla/stream_executor/gpu:gpu_cudamallocasync_allocator",
         ":gpu_runtime_hermetic_cuda_deps",
     ],
     defines = if_linux_x86_64(["TF_PLATFORM_LINUX_X86_64"]),
@@ -230,7 +229,10 @@ tf_cuda_library(
         }) + if_cuda_or_rocm([
             "@local_xla//xla/service:gpu_plugin_impl",  # for registering cuda compiler.
         ]),
-    ),
+    ) + if_cuda_is_configured([
+        "@local_xla//xla/stream_executor/gpu:gpu_cudamallocasync_allocator",
+        "@local_xla//xla/stream_executor/cuda:cuda_platform",
+    ]),
     alwayslink = 1,
 )
 

@@ -9,6 +9,7 @@
 #   to any TensorFlow code outside this package.
 
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda")
 load(
     "@local_config_rocm//rocm:build_defs.bzl",
     "if_rocm_is_configured",
@@ -1074,13 +1075,6 @@ tf_cuda_library(
         "rocm.h",
         "stream_executor.h",
     ],
-    cuda_deps =
-        if_google(
-            ["@local_xla//xla/stream_executor/cuda:cuda_platform"],
-            [
-                ":private_static_dep",
-            ],
-        ),
     features = ["-parse_headers"],
     deps = [
         "//tensorflow/core:lib",
@@ -1095,7 +1089,14 @@ tf_cuda_library(
         "@local_xla//xla/stream_executor/rocm:rocm_platform_id",
     ] + if_rocm_is_configured([
         "@local_xla//xla/stream_executor/rocm:miopen_plugin",
-    ]),
+    ]) + if_cuda(
+        if_google(
+            [
+                "@local_xla//xla/stream_executor/cuda:cuda_platform",
+            ],
+            if_static([":gpu_all_runtime"]),
+        ),
+    ),
 )
 
 # Like stream_executor library, but compiles without --config=cuda
