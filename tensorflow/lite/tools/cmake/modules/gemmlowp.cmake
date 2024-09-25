@@ -23,7 +23,7 @@ OverridableFetchContent_Declare(
   gemmlowp
   GIT_REPOSITORY https://github.com/PlexusEP/gemmlowp.git
   # Sync with tensorflow/third_party/gemmlowp/workspace.bzl
-  GIT_TAG plxs
+  GIT_TAG v0.0.1
   # It's not currently (cmake 3.17) possible to shallow clone with a GIT TAG
   # as cmake attempts to git checkout the commit hash after the clone
   # which doesn't work as it's a shallow clone hence a different commit hash.
